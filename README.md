@@ -17,6 +17,18 @@ Stream music from your emby server using mycroft!
  - "Play random"
 
 
+## Contributing
+Always looking for bug fixes and features that make the Emby for Mycroft experience better!
+
+### Dev Notes
+Skill is broken down into 3 main parts
+* emby_client.py
+    * An intentionally lean synchronous Emby client
+* emby_croft.py
+    * Logic layer between Emby client and Mycroft
+* __init__.py
+    * Mycroft skill hooks
+
 ## Credits
 rickyphewitt
 
