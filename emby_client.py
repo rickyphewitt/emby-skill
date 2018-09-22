@@ -1,4 +1,6 @@
 import json
+import logging
+
 import requests
 from enum import Enum
 
@@ -7,6 +9,7 @@ AUTHENTICATE_BY_NAME_URL = "/Users/AuthenticateByName"
 SEARCH_HINTS_URL = "/Search/Hints"
 ARTIST_INSTANT_MIX_URL = "/Artists/InstantMix"
 SONG_FILE_URL = "/Audio"
+DOWNLOAD_URL = "/Download"
 
 # auth constants
 AUTH_USERNAME_KEY = "Username"
@@ -14,6 +17,7 @@ AUTH_PASSWORD_KEY = "Pw"
 
 # query param constants
 MP3_STREAM = "stream.mp3?static=true"
+API_KEY = "api_key="
 
 class EmbyClient(object):
     """
@@ -28,6 +32,7 @@ class EmbyClient(object):
         :param username:
         :param password:
         """
+        self.log = logging.getLogger(__name__)
         self.host = host
         self.auth = None
         self.auth = self._auth_by_user(username, password)
@@ -72,6 +77,7 @@ class EmbyClient(object):
             types = types[:len(types) - 1]
             query_params = query_params + f'&IncludeItemTypes={types}'
 
+        self.log.log(20, query_params)
         return self._get(SEARCH_HINTS_URL + query_params)
 
     def instant_mix(self, item_id):
@@ -81,8 +87,8 @@ class EmbyClient(object):
         return self._get(instant_item_mix)
 
     def get_song_file(self, song_id):
-        url = f'{SONG_FILE_URL}/{song_id}/{MP3_STREAM}'
-        return self._get(url)
+        url = f'{self.host}{SONG_FILE_URL}/{song_id}/{MP3_STREAM}&{API_KEY}{self.auth.token}'
+        return url
 
     def _post(self, url, payload):
         """
@@ -118,7 +124,7 @@ class EmbyAuthorization(object):
         :param response:
         :return:
         """
-        auth_content = json.loads(response.text)
+        auth_content = response.json()
         return EmbyAuthorization(auth_content["User"]["Id"], auth_content["AccessToken"])
 
 

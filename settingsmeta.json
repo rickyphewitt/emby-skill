@@ -3,23 +3,32 @@
     "skillMetadata": {
         "sections": [
             {
-                "name": "Options << Name of section",
+                "name": "Server",
                 "fields": [
                     {
-                        "name": "internal_python_variable_name",
+                        "type": "label",
+                        "label": "Server settings"
+                    },
+                    {
+                        "name": "hostname",
                         "type": "text",
-                        "label": "Setting Friendly Display Name",
-                        "value": "",
-                        "placeholder": "demo prompt in the input box"
+                        "label": "Url",
+                        "value": "http://emby"
+                    },
+                    {
+                        "name": "port",
+                        "type": "number",
+                        "label": "Port",
+                        "value": "8096"
                     }
                 ]
             },
             {
-                "name": "Login << Name of another section",
+                "name": "User Login Information",
                 "fields": [
                     {
                         "type": "label",
-                        "label": "Just a little bit of extra info for the user to understand following settings"
+                        "label": "Username/password. Leave password blank if you do not use a password."
                     },
                     {
                         "name": "username",

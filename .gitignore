@@ -1,4 +1,5 @@
 *.pyc
 settings.json
 .idea/*
-
+.idea/workspace.xml
+.pytest_cache/

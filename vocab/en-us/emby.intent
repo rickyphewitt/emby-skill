@@ -1,8 +1,6 @@
-Play {artist/album/song} from emby
 Play artist {artist} from emby
 Play album {album} from emby
 Play song {song} from emby
-Play instant mix for {artist} from emby
-Play instant mix for {album} from emby
-Play instant mix for {song} from emby
-Play random from emby
+Play instant mix for artist {artist} from emby
+Play instant mix for album {album} from emby
+Play instant mix for song {song} from emby
