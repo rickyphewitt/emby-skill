@@ -67,7 +67,7 @@ class EmbyClient(object):
 
     def search(self, query, media_types=[]):
 
-        query_params = f'?SearchTerm={query}'
+        query_params = '?SearchTerm={0}'.format(query)
 
         types = None
         for type in media_types:
@@ -75,7 +75,7 @@ class EmbyClient(object):
 
         if types:
             types = types[:len(types) - 1]
-            query_params = query_params + f'&IncludeItemTypes={types}'
+            query_params = query_params + '&IncludeItemTypes={0}'.format(types)
 
         self.log.log(20, query_params)
         return self._get(SEARCH_HINTS_URL + query_params)
@@ -83,11 +83,11 @@ class EmbyClient(object):
     def instant_mix(self, item_id):
         # userId query param is required even though its not required in swagger
         # https://emby.media/community/index.php?/topic/50760-instant-mix-api-value-cannot-be-null-error/i
-        instant_item_mix = f'/Items/{item_id}/InstantMix?userId={self.auth.user_id}'
+        instant_item_mix = '/Items/{0}/InstantMix?userId={1}'.format(item_id, self.auth.user_id)
         return self._get(instant_item_mix)
 
     def get_song_file(self, song_id):
-        url = f'{self.host}{SONG_FILE_URL}/{song_id}/{MP3_STREAM}&{API_KEY}{self.auth.token}'
+        url = '{0}{1}/{2}/{3}&{4}{5}'.format(self.host, SONG_FILE_URL, song_id, MP3_STREAM, API_KEY, self.auth.token)
         return url
 
     def _post(self, url, payload):

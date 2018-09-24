@@ -71,7 +71,7 @@ class EmbyCroft(object):
 
         item_count = len(items)
 
-        self.log.log(20, f'Found {item_count} item(s) when searching for {media_name}')
+        self.log.log(20, 'Found {0} item(s) when searching for {1}'.format(item_count, media_name))
 
         songs = []
         if item_count > 0:
