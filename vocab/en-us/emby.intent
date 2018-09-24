@@ -1,6 +1,1 @@
-Play artist {artist} from emby
-Play album {album} from emby
-Play song {song} from emby
-Play instant mix for artist {artist} from emby
-Play instant mix for album {album} from emby
-Play instant mix for song {song} from emby
+play {media} from emby

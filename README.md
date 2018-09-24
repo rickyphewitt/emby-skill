@@ -5,7 +5,7 @@ This skill allows audio playback from an emby server
 Stream music from your emby server using mycroft!
 
 ## Examples
- - " play instant mix for artist dance gavin dance from emby"
+ - Play Dance Gavin Dance From Emby
 
 
 ## Contributing
