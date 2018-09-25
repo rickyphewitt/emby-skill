@@ -1,10 +1,7 @@
 import logging
-
-from .emby_client import EmbyClient, MediaItemType, EmbyMediaItem
 import json
 
-import os
-cwd = os.getcwd()
+from .emby_client import EmbyClient, MediaItemType, EmbyMediaItem
 
 
 class EmbyCroft(object):
@@ -90,8 +87,3 @@ class EmbyCroft(object):
         if response.text:
             response_json = json.loads(response.text)
             return response_json["Items"]
-
-
-# play artist dance gavin dance from emby
-# play instant mix for artist dance gavin dance from emby
-# play instant mix for artist three days grace from emby
