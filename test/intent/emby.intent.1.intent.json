@@ -1,0 +1,8 @@
+{
+    "expected_dialog": "emby",
+    "intent": {
+        "media": "dance gavin dance"
+    },
+    "intent_type": "emby.intent",
+    "utterance": "play dance gavin dance from emby"
+}

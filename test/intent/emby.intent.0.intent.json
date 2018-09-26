@@ -1,0 +1,8 @@
+{
+    "expected_dialog": "emby",
+    "intent": {
+        "media": "thrice"
+    },
+    "intent_type": "emby.intent",
+    "utterance": "play thrice from mb"
+}
