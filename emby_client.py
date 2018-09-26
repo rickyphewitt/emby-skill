@@ -19,6 +19,7 @@ AUTH_PASSWORD_KEY = "Pw"
 MP3_STREAM = "stream.mp3?static=true"
 API_KEY = "api_key="
 
+
 class EmbyClient(object):
     """
     Handles communication to the Emby server
@@ -45,7 +46,8 @@ class EmbyClient(object):
         :param password:
         :return:
         """
-        auth_payload = {AUTH_USERNAME_KEY: username, AUTH_PASSWORD_KEY: password}
+        auth_payload = \
+            {AUTH_USERNAME_KEY: username, AUTH_PASSWORD_KEY: password}
         response = self._post(AUTHENTICATE_BY_NAME_URL, auth_payload)
         assert response.status_code is 200
         return EmbyAuthorization.from_response(response)
@@ -56,9 +58,11 @@ class EmbyClient(object):
 
         :return:
         """
-        media_browser_header = "MediaBrowser Client=mycroft, Device=mark1, DeviceId=34343, Version=0.1"
+        media_browser_header = "MediaBrowser Client=mycroft," \
+                               " Device=mark1, DeviceId=34343, Version=0.1"
         if self.auth and self.auth.user_id:
-            media_browser_header = media_browser_header + ", UserId=" + self.auth.user_id
+            media_browser_header = \
+                media_browser_header + ", UserId=" + self.auth.user_id
         headers = {"X-Emby-Authorization": media_browser_header}
         if self.auth and self.auth.token:
             headers["X-Emby-Token"] = self.auth.token
@@ -81,13 +85,18 @@ class EmbyClient(object):
         return self._get(SEARCH_HINTS_URL + query_params)
 
     def instant_mix(self, item_id):
-        # userId query param is required even though its not required in swagger
-        # https://emby.media/community/index.php?/topic/50760-instant-mix-api-value-cannot-be-null-error/i
-        instant_item_mix = '/Items/{0}/InstantMix?userId={1}'.format(item_id, self.auth.user_id)
+        # userId query param is required even though its not
+        # required in swagger
+        # https://emby.media/community/index.php?/
+        # topic/50760-instant-mix-api-value-cannot-be-null-error/
+        instant_item_mix = '/Items/{0}/InstantMix?userId={1}'\
+            .format(item_id, self.auth.user_id)
         return self._get(instant_item_mix)
 
     def get_song_file(self, song_id):
-        url = '{0}{1}/{2}/{3}&{4}{5}'.format(self.host, SONG_FILE_URL, song_id, MP3_STREAM, API_KEY, self.auth.token)
+        url = '{0}{1}/{2}/{3}&{4}{5}'\
+            .format(self.host, SONG_FILE_URL,
+                    song_id, MP3_STREAM, API_KEY, self.auth.token)
         return url
 
     def _post(self, url, payload):
@@ -98,7 +107,8 @@ class EmbyClient(object):
         :param payload:
         :return:
         """
-        return requests.post(self.host + url, json = payload, headers = self.get_headers())
+        return requests.post(
+            self.host + url, json=payload, headers=self.get_headers())
 
     def _get(self, url):
         """
@@ -108,6 +118,7 @@ class EmbyClient(object):
         :return:
         """
         return requests.get(self.host + url, headers=self.get_headers())
+
 
 class EmbyAuthorization(object):
 
@@ -125,8 +136,8 @@ class EmbyAuthorization(object):
         :return:
         """
         auth_content = response.json()
-        return EmbyAuthorization(auth_content["User"]["Id"], auth_content["AccessToken"])
-
+        return EmbyAuthorization(
+            auth_content["User"]["Id"], auth_content["AccessToken"])
 
 
 class EmbyMediaItem(object):
@@ -155,12 +166,6 @@ class EmbyMediaItem(object):
         return media_items
 
 
-
-
-
-
-
-
 class MediaItemType(Enum):
     ARTIST = "MusicArtist"
     ALBUM = "MusicAlbum"
@@ -171,4 +176,3 @@ class MediaItemType(Enum):
         for item_type in MediaItemType:
             if item_type.value == enum_string:
                 return item_type
-

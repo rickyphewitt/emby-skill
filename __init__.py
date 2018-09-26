@@ -16,7 +16,8 @@ class Emby(MycroftSkill):
                 self.settings["username"], self.settings["password"])
         except Exception as e:
             self.log.log(20, e)
-            self.speak('Failed to connect to Emby. Please check your configuration at Mycroft.ai')
+            self.speak('Failed to connect to Emby. Please check your'
+                       ' configuration at Mycroft.ai')
 
     @intent_file_handler('emby.intent')
     def handle_emby(self, message):
@@ -33,7 +34,8 @@ class Emby(MycroftSkill):
             self.speak_playing(media)
         except Exception as e:
             self.log.log(20, e)
-            self.speak("Unable to find or play " + media + ". Please try again")
+            self.speak("Unable to find or play " + media +
+                       ". Please try again")
 
     def speak_playing(self, media):
         data = dict()
@@ -46,9 +48,3 @@ class Emby(MycroftSkill):
 
 def create_skill():
     return Emby()
-
-
-
-
-
-

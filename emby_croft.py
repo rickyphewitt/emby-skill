@@ -1,6 +1,5 @@
 import logging
 import json
-
 from .emby_client import EmbyClient, MediaItemType, EmbyMediaItem
 
 
@@ -45,7 +44,8 @@ class EmbyCroft(object):
         :return:
         """
         response = self.client.instant_mix(item_id)
-        queue_items = EmbyMediaItem.from_list(EmbyCroft.parse_instant_mix_from_response(response))
+        queue_items = EmbyMediaItem.from_list(
+            EmbyCroft.parse_instant_mix_from_response(response))
 
         song_uris = []
         for item in queue_items:
@@ -68,7 +68,8 @@ class EmbyCroft(object):
 
         item_count = len(items)
 
-        self.log.log(20, 'Found {0} item(s) when searching for {1}'.format(item_count, media_name))
+        self.log.log(20, 'Found {0} item(s) when searching for {1}'
+                     .format(item_count, media_name))
 
         songs = []
         if item_count > 0:
