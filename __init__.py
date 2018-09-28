@@ -9,6 +9,9 @@ class Emby(MycroftSkill):
     def __init__(self):
         MycroftSkill.__init__(self)
         self.audio_service = None
+        self.emby_croft = None
+
+    def initialize(self):
 
         try:
             self.emby_croft = EmbyCroft(
