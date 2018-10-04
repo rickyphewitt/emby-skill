@@ -1,6 +1,12 @@
 import logging
 import json
-from .emby_client import EmbyClient, MediaItemType, EmbyMediaItem
+try:
+    # this import works when installing/running the skill
+    # note the relative '.'
+    from .emby_client import EmbyClient, MediaItemType, EmbyMediaItem
+except (ImportError, SystemError):
+    # when running unit tests the '.' from above fails so we exclude it
+    from emby_client import EmbyClient, MediaItemType, EmbyMediaItem
 
 
 class EmbyCroft(object):
