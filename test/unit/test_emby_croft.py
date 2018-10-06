@@ -56,11 +56,14 @@ class TestEmbyCroft(object):
 
     @pytest.mark.mocked
     def test_instant_mix(self):
-        album = "This is how the wind shifts"
-        emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD)
+        with mock.patch('requests.post') as MockRequestsPost:
+            album = "This is how the wind shifts"
+            response = MockResponse(200, TestEmbyCroft.auth_server_response)
+            MockRequestsPost.return_value = response
+            emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD)
 
-        songs = emby_croft.instant_mix_for_media(album)
-        assert songs is not None
+            songs = emby_croft.instant_mix_for_media(album)
+            assert songs is not None
 
     @pytest.mark.live
     def test_search_for_song(self):

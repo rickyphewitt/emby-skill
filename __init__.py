@@ -8,19 +8,29 @@ class Emby(MycroftSkill):
 
     def __init__(self):
         MycroftSkill.__init__(self)
+        self._setup = False
         self.audio_service = None
         self.emby_croft = None
 
     def initialize(self):
 
+        # register web settings changes
+        self.settings.set_changed_callback(self.config_changed_callback)
+        self.config_changed_callback()
+
+    def config_changed_callback(self):
+        """
+        Attempt to connect to the local Emby server
+
+        :return:
+        """
         try:
             self.emby_croft = EmbyCroft(
                 self.settings["hostname"] + ":" + str(self.settings["port"]),
                 self.settings["username"], self.settings["password"])
+            self.speak_dialog('configuration_success', self.settings)
         except Exception as e:
-            self.log.log(20, e)
-            self.speak('Failed to connect to Emby. Please check your'
-                       ' configuration at Mycroft.ai')
+            self.speak_dialog('configuration_fail')
 
     @intent_file_handler('emby.intent')
     def handle_emby(self, message):
@@ -32,13 +42,16 @@ class Emby(MycroftSkill):
 
         songs = []
         try:
-            songs = self.emby_croft.instant_mix_for_media(media)
-            self.audio_service.play(songs)
-            self.speak_playing(media)
+            songs = self.emby_croft.find_songs(media)
         except Exception as e:
             self.log.log(20, e)
-            self.speak("Unable to find or play " + media +
-                       ". Please try again")
+            self.speak_dialog('play_fail', {"media": media})
+
+        if len(songs) < 1:
+            self.speak_dialog('play_fail', {"media": media})
+        else:
+            self.speak_playing(media)
+            self.audio_service.play(songs)
 
     def speak_playing(self, media):
         data = dict()

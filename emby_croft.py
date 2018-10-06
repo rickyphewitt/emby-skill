@@ -15,6 +15,19 @@ class EmbyCroft(object):
         self.log = logging.getLogger(__name__)
         self.client = EmbyClient(host, username, password)
 
+    def find_songs(self, media_name, media_type=None)->[]:
+        """
+        This is the expected entry point for determining what songs to play
+
+        :param media_name:
+        :param media_type:
+        :return:
+        """
+
+        songs = []
+        songs = self.instant_mix_for_media(media_name)
+        return songs
+
     def search_artist(self, artist):
         """
         Helper method to just search Emby for an artist
