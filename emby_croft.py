@@ -99,11 +99,11 @@ class EmbyCroft(object):
     @staticmethod
     def parse_search_hints_from_response(response):
         if response.text:
-            response_json = json.loads(response.text)
+            response_json = response.json()
             return response_json["SearchHints"]
 
     @staticmethod
     def parse_instant_mix_from_response(response):
         if response.text:
-            response_json = json.loads(response.text)
+            response_json = response.json()
             return response_json["Items"]

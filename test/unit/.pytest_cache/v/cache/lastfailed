@@ -1,3 +1,4 @@
 {
+  "test_emby_croft.py": true,
   "test_emby_interactions.py::test_login_real_sever": true
 }
