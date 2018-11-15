@@ -1,6 +1,1 @@
-[
-  "test_emby_interactions.py::test_auth",
-  "test_emby_interactions.py::test_search_for_artist",
-  "test_emby_interactions.py::test_play_artist",
-  "test_emby_interactions.py::test_search_for_song"
-]
+[]

@@ -1,6 +1,12 @@
 import logging
 import json
-from .emby_client import EmbyClient, MediaItemType, EmbyMediaItem
+try:
+    # this import works when installing/running the skill
+    # note the relative '.'
+    from .emby_client import EmbyClient, MediaItemType, EmbyMediaItem
+except (ImportError, SystemError):
+    # when running unit tests the '.' from above fails so we exclude it
+    from emby_client import EmbyClient, MediaItemType, EmbyMediaItem
 
 
 class EmbyCroft(object):
@@ -8,6 +14,19 @@ class EmbyCroft(object):
     def __init__(self, host, username, password):
         self.log = logging.getLogger(__name__)
         self.client = EmbyClient(host, username, password)
+
+    def find_songs(self, media_name, media_type=None)->[]:
+        """
+        This is the expected entry point for determining what songs to play
+
+        :param media_name:
+        :param media_type:
+        :return:
+        """
+
+        songs = []
+        songs = self.instant_mix_for_media(media_name)
+        return songs
 
     def search_artist(self, artist):
         """
@@ -80,11 +99,11 @@ class EmbyCroft(object):
     @staticmethod
     def parse_search_hints_from_response(response):
         if response.text:
-            response_json = json.loads(response.text)
+            response_json = response.json()
             return response_json["SearchHints"]
 
     @staticmethod
     def parse_instant_mix_from_response(response):
         if response.text:
-            response_json = json.loads(response.text)
+            response_json = response.json()
             return response_json["Items"]

@@ -1,5 +1,9 @@
 from unittest.mock import MagicMock
-from test.integrationtests.skills.skill_tester import SkillTest
+try:
+    # this import is not available when unit testing skill, but is required for mycroft-skills ci
+    from test.integrationtests.skills.skill_tester import SkillTest
+except ImportError:
+    pass
 
 
 def test_runner(skill, example, emitter, loader):
