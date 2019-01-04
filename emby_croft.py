@@ -1,5 +1,5 @@
 import logging
-import json
+
 try:
     # this import works when installing/running the skill
     # note the relative '.'
@@ -64,7 +64,7 @@ class EmbyCroft(object):
         """
         response = self.client.instant_mix(item_id)
         queue_items = EmbyMediaItem.from_list(
-            EmbyCroft.parse_instant_mix_from_response(response))
+            EmbyCroft.parse_response(response))
 
         song_uris = []
         for item in queue_items:
@@ -96,6 +96,29 @@ class EmbyCroft(object):
 
         return songs
 
+    def get_albums_by_artist(self, artist_id):
+        return self.client.get_albums_by_artist(artist_id)
+
+    def get_songs_by_album(self, album_id):
+        response = self.client.get_songs_by_album(album_id)
+        return self.convert_response_to_playable_songs(response)
+
+    def get_songs_by_artist(self, artist_id):
+        response = self.client.get_songs_by_artist(artist_id)
+        return self.convert_response_to_playable_songs(response)
+
+    def convert_response_to_playable_songs(self, item_query_response):
+        queue_items = EmbyMediaItem.from_list(
+            EmbyCroft.parse_response(item_query_response))
+        return self.convert_to_playable_songs(queue_items)
+
+    def convert_to_playable_songs(self, songs):
+        song_uris = []
+        for item in songs:
+            song_uris.append(self.client.get_song_file(item.id))
+        return song_uris
+
+
     @staticmethod
     def parse_search_hints_from_response(response):
         if response.text:
@@ -103,7 +126,58 @@ class EmbyCroft(object):
             return response_json["SearchHints"]
 
     @staticmethod
-    def parse_instant_mix_from_response(response):
+    def parse_response(response):
         if response.text:
             response_json = response.json()
             return response_json["Items"]
+
+    def parse_common_phrase(self, phrase: str):
+        """
+        Attempts to match emby items with phrase
+        :param phrase:
+        :return:
+        """
+
+        logging.log(20, "phrase: " + phrase)
+        phrase = phrase.lower()
+        # see if phrase contains mb or emby
+        if 'mb' in phrase or 'emby' in phrase:
+            # remove from phrase
+            phrase.replace("mb", "")
+            phrase.replace("emby", "")
+
+        results = self.search(phrase)
+
+        if results is None or len(results) is 0:
+            return None, None
+        else:
+            logging.log(20, "Found: " + str(len(results)) + " to parse")
+            # the idea here is
+            # if an artist is found, return songs from this artist
+            # elif an album is found, return songs from this album
+            # elif a song is found, return song
+            artists = []
+            albums = []
+            songs = []
+            for result in results:
+                if result.type == MediaItemType.ARTIST:
+                    artists.append(result)
+                elif result.type == MediaItemType.ALBUM:
+                    albums.append(result)
+                elif result.type == MediaItemType.SONG:
+                    songs.append(result)
+                else:
+                    logging.log(20, "Item is not an Artist/Album/Song: " + result.type)
+
+            if artists:
+                artist_songs = self.get_songs_by_artist(artists[0].id)
+                return 'artist', artist_songs
+            elif albums:
+                album_songs = self.get_songs_by_album(albums[0].id)
+                return 'album', album_songs
+            elif songs:
+                # if a song(s) matches pick the 1st
+                song_songs = self.convert_to_playable_songs(songs)
+                return 'song', song_songs
+            else:
+                return None, None

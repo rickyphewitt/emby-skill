@@ -1,10 +1,11 @@
 from mycroft import MycroftSkill, intent_file_handler
+from mycroft.skills.common_play_skill import CommonPlaySkill, CPSMatchLevel
 from mycroft.skills.audioservice import AudioService
 
 from .emby_croft import EmbyCroft
 
 
-class Emby(MycroftSkill):
+class Emby(CommonPlaySkill):
 
     def __init__(self):
         MycroftSkill.__init__(self)
@@ -50,6 +51,52 @@ class Emby(MycroftSkill):
 
     def stop(self):
         pass
+
+    def CPS_start(self, phrase, data):
+        """ Starts playback.
+
+            Called by the playback control skill to start playback if the
+            skill is selected (has the best match level)
+        """
+        # setup audio service
+        self.audio_service = AudioService(self.bus)
+        self.audio_service.play(data[phrase])
+
+
+    def CPS_match_query_phrase(self, phrase):
+        """ This method responds whether the skill can play the input phrase.
+
+            The method is invoked by the PlayBackControlSkill.
+
+            Returns: tuple (matched phrase(str),
+                            match level(CPSMatchLevel),
+                            optional data(dict))
+                     or None if no match was found.
+        """
+        # first thing is connect to emby or bail
+        if not self.auth_to_emby():
+            return None
+
+        self.log.log(20, phrase)
+        match_type, songs = self.emby_croft.parse_common_phrase(phrase)
+
+        if match_type and songs:
+            match_level = None
+            if match_type is not None:
+                self.log.log(20, 'Found match of type: ' + match_type)
+
+                if match_type == 'song' or match_type == 'album':
+                    match_level = CPSMatchLevel.TITLE
+                elif match_type == 'artist':
+                    match_level = CPSMatchLevel.ARTIST
+
+                self.log.log(20, 'match level' + str(match_level))
+
+            song_data = dict()
+            song_data[phrase] = songs
+            return phrase, match_level, song_data
+        else:
+            return None
 
     def auth_to_emby(self):
         """

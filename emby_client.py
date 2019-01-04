@@ -10,7 +10,13 @@ SEARCH_HINTS_URL = "/Search/Hints"
 ARTIST_INSTANT_MIX_URL = "/Artists/InstantMix"
 SONG_FILE_URL = "/Audio"
 DOWNLOAD_URL = "/Download"
-
+ITEMS_ARTIST_KEY = "ArtistIds"
+ITEMS_PARENT_ID_KEY = "ParentId"
+ITEMS_URL = "/Items"
+ITEMS_ALBUMS_URL = ITEMS_URL + "/?SortBy=SortName&SortOrder=Ascending&IncludeItemTypes=MusicAlbum&Recursive=true&" + ITEMS_ARTIST_KEY + "="
+ITEMS_SONGS_BY_ARTIST_URL = ITEMS_URL + "/?SortBy=SortName&SortOrder=Ascending&IncludeItemTypes=Audio&Recursive=true&" + ITEMS_ARTIST_KEY + "="
+ITEMS_SONGS_BY_ALBUM_URL = ITEMS_URL + "/?SortBy=IndexNumber&" + ITEMS_PARENT_ID_KEY + "="
+LIMIT = "&Limit="
 # auth constants
 AUTH_USERNAME_KEY = "Username"
 AUTH_PASSWORD_KEY = "Pw"
@@ -98,6 +104,20 @@ class EmbyClient(object):
             .format(self.host, SONG_FILE_URL,
                     song_id, MP3_STREAM, API_KEY, self.auth.token)
         return url
+
+    def get_albums_by_artist(self, artist_id):
+        url = ITEMS_ALBUMS_URL + str(artist_id)
+        return self._get(url)
+
+    def get_songs_by_album(self, album_id):
+        url = ITEMS_SONGS_BY_ALBUM_URL + str(album_id)
+        return self._get(url)
+
+    def get_songs_by_artist(self, artist_id, limit=None):
+        url = ITEMS_SONGS_BY_ARTIST_URL + str(artist_id)
+        if limit:
+            url = url + LIMIT+str(limit)
+        return self._get(url)
 
     def _post(self, url, payload):
         """
