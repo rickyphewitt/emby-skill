@@ -23,6 +23,9 @@ class TestEmbyCroft(object):
     mocked_responses = None
     with open("test/unit/test_responses.json") as f:
         mocked_responses = json.load(f)
+    common_phrases = None
+    with open("test/unit/common_phrases.json") as f:
+        common_phrases = json.load(f)
 
     @pytest.mark.mocked
     def test_auth_mock(self):
@@ -55,13 +58,36 @@ class TestEmbyCroft(object):
                 assert songs is not None
                 assert len(songs) is 1
 
+    @pytest.mark.mocked
+    def test_parsing_common_phrase_mock(self):
+        with mock.patch('requests.post') as MockRequestsPost:
+            auth_server_response = TestEmbyCroft.mocked_responses["emby"]["3.5.2.0"]["auth_server_response"]
+            response = MockResponse(200, auth_server_response)
+            MockRequestsPost.return_value = response
+            emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD)
+
+            for phrase in TestEmbyCroft.common_phrases:
+                match_type = TestEmbyCroft.common_phrases[phrase]["match_type"]
+
+                search_response = TestEmbyCroft.mocked_responses["emby"]["3.5.2.0"]["common_play"][match_type][
+                    "search_response"]
+                get_songs_response = TestEmbyCroft.mocked_responses["emby"]["3.5.2.0"]["common_play"][match_type][
+                    "songs_response"]
+                with mock.patch('requests.get') as MockRequestsGet:
+                    responses = [MockResponse(200, search_response), MockResponse(200, get_songs_response)]
+                    MockRequestsGet.side_effect = responses
+
+                    match_type, songs = emby_croft.parse_common_phrase(phrase)
+
+                    assert match_type == TestEmbyCroft.common_phrases[phrase]["match_type"]
+                    assert songs
+
     @pytest.mark.live
     def test_auth(self):
         emby_client = EmbyCroft(HOST, USERNAME, PASSWORD)
         assert emby_client.client.auth is not None
 
     @pytest.mark.live
-    @pytest.mark.ricky
     def test_instant_mix_live(self):
         album = "This is how the wind shifts"
         emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD)
@@ -81,6 +107,16 @@ class TestEmbyCroft(object):
             assert song_item.id is not None
             assert song_item.type == MediaItemType.SONG
 
+    @pytest.mark.live
+    def test_parsing_common_phrase(self):
+
+        emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD)
+
+        for phrase in TestEmbyCroft.common_phrases:
+            match_type, songs = emby_croft.parse_common_phrase(phrase)
+
+            assert match_type == TestEmbyCroft.common_phrases[phrase]['match_type']
+            assert songs
 
 class MockResponse:
     def __init__(self, status_code, json_data):
