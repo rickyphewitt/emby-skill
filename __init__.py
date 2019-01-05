@@ -13,28 +13,18 @@ class Emby(MycroftSkill):
         self.emby_croft = None
 
     def initialize(self):
-
-        # register web settings changes
-        self.settings.set_changed_callback(self.config_changed_callback)
-        self.config_changed_callback()
-
-    def config_changed_callback(self):
-        """
-        Attempt to connect to the local Emby server
-
-        :return:
-        """
-        try:
-            self.emby_croft = EmbyCroft(
-                self.settings["hostname"] + ":" + str(self.settings["port"]),
-                self.settings["username"], self.settings["password"])
-            self.speak_dialog('configuration_success', self.settings)
-        except Exception as e:
-            self.speak_dialog('configuration_fail')
+        pass
 
     @intent_file_handler('emby.intent')
     def handle_emby(self, message):
+
         self.log.log(20, message.data)
+
+        # first thing is connect to emby or bail
+        if not self.auth_to_emby():
+            self.speak_dialog('configuration_fail')
+            return
+
         media = message.data['media']
 
         # setup audio service
@@ -60,6 +50,24 @@ class Emby(MycroftSkill):
 
     def stop(self):
         pass
+
+    def auth_to_emby(self):
+        """
+        Attempts to auth to the server based on the config
+        returns true/false on success/failure respectively
+
+        :return:
+        """
+        auth_success = False
+        try:
+            self.emby_croft = EmbyCroft(
+                self.settings["hostname"] + ":" + str(self.settings["port"]),
+                self.settings["username"], self.settings["password"])
+            auth_success = True
+        except Exception as e:
+            self.log.log(20, "failed to connect to emby, error: {0}".format(str(e)))
+
+        return auth_success
 
 
 def create_skill():
