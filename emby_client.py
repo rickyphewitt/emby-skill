@@ -1,6 +1,4 @@
-import json
 import logging
-
 import requests
 from enum import Enum
 

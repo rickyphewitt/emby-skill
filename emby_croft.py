@@ -1,4 +1,6 @@
 import logging
+from enum import Enum
+from random import shuffle
 
 try:
     # this import works when installing/running the skill
@@ -8,12 +10,63 @@ except (ImportError, SystemError):
     # when running unit tests the '.' from above fails so we exclude it
     from emby_client import EmbyClient, MediaItemType, EmbyMediaItem
 
+class IntentType(Enum):
+    MEDIA = "media"
+    ARTIST = "artist"
+    ALBUM = "album"
+    SONG = "song"
+
+    @staticmethod
+    def from_string(enum_string):
+        assert enum_string is not None
+        for item_type in IntentType:
+            if item_type.value == enum_string.lower():
+                return item_type
+
+
 
 class EmbyCroft(object):
 
     def __init__(self, host, username, password):
         self.log = logging.getLogger(__name__)
         self.client = EmbyClient(host, username, password)
+
+    @staticmethod
+    def determine_intent(intent: dict):
+        """
+        Determine the intent!
+
+        :param self:
+        :param intent:
+        :return:
+        """
+        if 'media' in intent:
+            return intent['media'], IntentType.from_string('media')
+        elif 'artist' in intent:
+            return intent['artist'], IntentType.from_string('artist')
+        else:
+            return None
+
+    def handle_intent(self, intent: str, intent_type: IntentType):
+        """
+        Returns songs for given intent if songs are found; none if not
+        :param intent:
+        :return:
+        """
+
+        songs = []
+        if intent_type == IntentType.MEDIA:
+            # default to instant mix
+            songs = self.find_songs(intent)
+        elif intent_type == IntentType.ARTIST:
+            # return songs by artist
+            artist_items = self.search_artist(intent)
+            if len(artist_items) > 0:
+                songs = self.get_songs_by_artist(artist_items[0].id)
+                # shuffle by default for songs by artist
+                shuffle(songs)
+
+        return songs
 
     def find_songs(self, media_name, media_type=None)->[]:
         """

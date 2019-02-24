@@ -1,2 +1,4 @@
 play {media} from emby
 play {media} from mb
+play artist {artist} from emby
+play artist {artist} from mb

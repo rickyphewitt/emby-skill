@@ -1,0 +1,8 @@
+{
+    "expected_dialog": "emby",
+    "intent": {
+        "artist": "a day to remember"
+    },
+    "intent_type": "emby.intent",
+    "utterance": "play artist a day to remember from emby"
+}
