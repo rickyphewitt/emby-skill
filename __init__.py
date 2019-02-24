@@ -26,22 +26,21 @@ class Emby(CommonPlaySkill):
             self.speak_dialog('configuration_fail')
             return
 
-        media = message.data['media']
-
-        # setup audio service
-        self.audio_service = AudioService(self.bus)
+        # determine intent
+        intent, intent_type = EmbyCroft.determine_intent(message.data)
 
         songs = []
         try:
-            songs = self.emby_croft.find_songs(media)
+            songs = self.emby_croft.handle_intent(intent, intent_type)
         except Exception as e:
             self.log.log(20, e)
-            self.speak_dialog('play_fail', {"media": media})
-
-        if len(songs) < 1:
-            self.speak_dialog('play_fail', {"media": media})
+            self.speak_dialog('play_fail', {"media": intent})
+        if not songs or len(songs) < 1:
+            self.speak_dialog('play_fail', {"media": intent})
         else:
-            self.speak_playing(media)
+            # setup audio service and play
+            self.audio_service = AudioService(self.bus)
+            self.speak_playing(intent)
             self.audio_service.play(songs)
 
     def speak_playing(self, media):
@@ -61,7 +60,6 @@ class Emby(CommonPlaySkill):
         # setup audio service
         self.audio_service = AudioService(self.bus)
         self.audio_service.play(data[phrase])
-
 
     def CPS_match_query_phrase(self, phrase):
         """ This method responds whether the skill can play the input phrase.

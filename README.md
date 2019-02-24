@@ -2,10 +2,15 @@
 This skill allows audio playback from an Emby server
 
 ## About 
-Stream music from your Emby server using Mycroft! Right now you can play an instant mix of any artist/album/song in your Emby library. 
+Stream music from your Emby server using Mycroft! Play all songs by an artist or an instant mix of any artist/album/song in your Emby library. 
 
 ## Examples 
 * "Play Dance Gavin Dance From Emby"
+* "Play Artist Thrice From Emby"
+
+## Common Play Framework
+This skill supports the common play framework! This means you don't have to specify "Emby" in your intent. For Example
+* "Play The Beatles"
 
 ## Credits 
 rickyphewitt
@@ -17,8 +22,6 @@ rickyphewitt
 #Emby,#Music
     
 ## Coming Soon
-- Play artist Thrice from Emby
-    * Shuffles all Thrice songs
 - Play album This is how the wind shifts from Emby
     * Plays the album This is how the wind shifts 
 

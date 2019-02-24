@@ -1,0 +1,8 @@
+{
+    "expected_dialog": "emby",
+    "intent": {
+        "artist": "from first to last"
+    },
+    "intent_type": "emby.intent",
+    "utterance": "play artist from first to last from mb"
+}
