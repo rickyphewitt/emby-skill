@@ -7,6 +7,7 @@ Stream music from your Emby server using Mycroft! Play all songs by an artist or
 ## Examples 
 * "Play Dance Gavin Dance From Emby"
 * "Play Artist Thrice From Emby"
+* "play Album Deadweight From Emby"
 
 ## Common Play Framework
 This skill supports the common play framework! This means you don't have to specify "Emby" in your intent. For Example
@@ -20,13 +21,9 @@ rickyphewitt
 
 ## Tags
 #Emby,#Music
-    
-## Coming Soon
-- Play album This is how the wind shifts from Emby
-    * Plays the album This is how the wind shifts 
 
 ## Contributing
-Always looking for bug fixes and features that make the Emby for Mycroft a experience better!
+Always looking for bug fixes, features, translation, and feedback that make the Emby for Mycroft experience better!
 
 ### Dev Notes
 Skill is broken down into 3 main parts

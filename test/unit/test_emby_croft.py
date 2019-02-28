@@ -115,10 +115,31 @@ class TestEmbyCroft(object):
                 responses = [MockResponse(200, search_response), MockResponse(200, get_songs_response)]
                 MockRequestsGet.side_effect = responses
 
-                songs = emby_croft.handle_intent("dance_gavin-dance", IntentType.ARTIST)
+                songs = emby_croft.handle_intent("dance gavin dance", IntentType.ARTIST)
 
                 assert songs
                 assert len(songs) == 4
+
+    @pytest.mark.mocked
+    def test_find_songs_by_album_mock(self):
+        with mock.patch('requests.post') as MockRequestsPost:
+            auth_server_response = TestEmbyCroft.mocked_responses["emby"]["3.5.2.0"]["auth_server_response"]
+            response = MockResponse(200, auth_server_response)
+            MockRequestsPost.return_value = response
+            emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD)
+
+            search_response = TestEmbyCroft.mocked_responses["emby"]["3.5.2.0"]["album_search"][
+                "search_response"]
+            get_songs_response = TestEmbyCroft.mocked_responses["emby"]["3.5.2.0"]["album_search"][
+                "songs_response"]
+            with mock.patch('requests.get') as MockRequestsGet:
+                responses = [MockResponse(200, search_response), MockResponse(200, get_songs_response)]
+                MockRequestsGet.side_effect = responses
+
+                songs = emby_croft.handle_intent("deadweight", IntentType.ARTIST)
+
+                assert songs
+                assert len(songs) == 1
 
 
 
@@ -135,15 +156,21 @@ class TestEmbyCroft(object):
         songs = emby_croft.instant_mix_for_media(album)
         assert songs is not None
 
-
     @pytest.mark.live
-    def test_find_songs_by_artist(self):
+    def test_handle_intent_by_artist(self):
         artist = "dance gavin dance"
 
         emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD)
         songs = emby_croft.handle_intent(artist, IntentType.ARTIST)
         assert songs is not None
 
+    @pytest.mark.live
+    def test_handle_intent_by_album(self):
+        album = "deadweight"
+
+        emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD)
+        songs = emby_croft.handle_intent(album, IntentType.ALBUM)
+        assert songs is not None
 
     @pytest.mark.live
     def test_search_for_song(self):
@@ -167,6 +194,7 @@ class TestEmbyCroft(object):
 
             assert match_type == TestEmbyCroft.common_phrases[phrase]['match_type']
             assert songs
+
 
 class MockResponse:
     def __init__(self, status_code, json_data):
