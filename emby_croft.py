@@ -44,6 +44,8 @@ class EmbyCroft(object):
             return intent['media'], IntentType.from_string('media')
         elif 'artist' in intent:
             return intent['artist'], IntentType.from_string('artist')
+        elif 'album' in intent:
+            return intent['album'], IntentType.from_string('album')
         else:
             return None
 
@@ -65,6 +67,11 @@ class EmbyCroft(object):
                 songs = self.get_songs_by_artist(artist_items[0].id)
                 # shuffle by default for songs by artist
                 shuffle(songs)
+        elif intent_type == IntentType.ALBUM:
+            # return songs by album
+            album_items = self.search_album(intent)
+            if len(album_items) > 0:
+                songs = self.get_songs_by_album(album_items[0].id)
 
         return songs
 
@@ -88,6 +95,14 @@ class EmbyCroft(object):
         :return:
         """
         return self.search(artist, [MediaItemType.ARTIST.value])
+
+    def search_album(self, artist):
+        """
+        Helper method to just search Emby for an album
+        :param album:
+        :return:
+        """
+        return self.search(artist, [MediaItemType.ALBUM.value])
 
     def search_song(self, song):
         """
