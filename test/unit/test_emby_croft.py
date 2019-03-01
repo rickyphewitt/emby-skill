@@ -142,7 +142,6 @@ class TestEmbyCroft(object):
                 assert len(songs) == 1
 
 
-
     @pytest.mark.live
     def test_auth(self):
         emby_client = EmbyCroft(HOST, USERNAME, PASSWORD)
