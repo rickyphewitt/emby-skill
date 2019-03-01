@@ -1,6 +1,8 @@
+import hashlib
 from mycroft import MycroftSkill, intent_file_handler
 from mycroft.skills.common_play_skill import CommonPlaySkill, CPSMatchLevel
 from mycroft.skills.audioservice import AudioService
+from mycroft.api import DeviceApi
 
 from .emby_croft import EmbyCroft
 
@@ -12,6 +14,9 @@ class Emby(CommonPlaySkill):
         self._setup = False
         self.audio_service = None
         self.emby_croft = None
+        self.device_id = hashlib.md5(
+            ("Emby"+DeviceApi().identity.uuid).encode())\
+            .hexdigest()
 
     def initialize(self):
         pass
@@ -104,10 +109,12 @@ class Emby(CommonPlaySkill):
         :return:
         """
         auth_success = False
+        self.log.log(20, "id" + str(self.device_id))
         try:
             self.emby_croft = EmbyCroft(
                 self.settings["hostname"] + ":" + str(self.settings["port"]),
-                self.settings["username"], self.settings["password"])
+                self.settings["username"], self.settings["password"],
+                self.device_id)
             auth_success = True
         except Exception as e:
             self.log.log(20, "failed to connect to emby, error: {0}".format(str(e)))

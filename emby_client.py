@@ -30,7 +30,7 @@ class EmbyClient(object):
 
     """
 
-    def __init__(self, host, username, password):
+    def __init__(self, host, username, password, device="noDevice", client="NoClient", client_id="1234", version="0.1"):
         """
         Sets up the connection to the Emby server
         :param host:
@@ -40,6 +40,10 @@ class EmbyClient(object):
         self.log = logging.getLogger(__name__)
         self.host = host
         self.auth = None
+        self.device = device
+        self.client = client
+        self.client_id = client_id
+        self.version = version
         self.auth = self._auth_by_user(username, password)
 
     def _auth_by_user(self, username, password):
@@ -62,8 +66,10 @@ class EmbyClient(object):
 
         :return:
         """
-        media_browser_header = "MediaBrowser Client=mycroft," \
-                               " Device=mark1, DeviceId=34343, Version=0.1"
+        media_browser_header = "MediaBrowser Client="+self.client +\
+                               ", Device="+self.device +\
+                               ", DeviceId="+self.client_id +\
+                               ", Version="+self.version
         if self.auth and self.auth.user_id:
             media_browser_header = \
                 media_browser_header + ", UserId=" + self.auth.user_id

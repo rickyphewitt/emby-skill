@@ -1,4 +1,5 @@
 import logging
+import subprocess
 from enum import Enum
 from random import shuffle
 
@@ -27,9 +28,13 @@ class IntentType(Enum):
 
 class EmbyCroft(object):
 
-    def __init__(self, host, username, password):
+    def __init__(self, host, username, password, client_id='12345'):
         self.log = logging.getLogger(__name__)
-        self.client = EmbyClient(host, username, password)
+        self.version = "UNKNOWN"
+        self.set_version()
+        self.client = EmbyClient(
+            host, username, password,
+            device="Mycroft", client="Emby Skill", client_id=client_id, version=self.version)
 
     @staticmethod
     def determine_intent(intent: dict):
@@ -249,3 +254,13 @@ class EmbyCroft(object):
                 return 'song', song_songs
             else:
                 return None, None
+
+    def set_version(self):
+        """
+        Attempts to get version based on the git hash
+        :return:
+        """
+        try:
+            self.version = subprocess.check_output(["git", "describe", "--always"]).strip().decode()
+        except Exception as e:
+            self.log.log(20, "Failed to determine version with error: {}".format(str(e)))
