@@ -6,16 +6,19 @@ from mycroft.api import DeviceApi
 
 from .emby_croft import EmbyCroft
 
+NAME = 'Emby'
+
 
 class Emby(CommonPlaySkill):
 
     def __init__(self):
         MycroftSkill.__init__(self)
+        self.spoken_name = NAME
         self._setup = False
         self.audio_service = None
         self.emby_croft = None
         self.device_id = hashlib.md5(
-            ("Emby"+DeviceApi().identity.uuid).encode())\
+            (NAME+DeviceApi().identity.uuid).encode())\
             .hexdigest()
 
     def initialize(self):
@@ -109,7 +112,6 @@ class Emby(CommonPlaySkill):
         :return:
         """
         auth_success = False
-        self.log.log(20, "id" + str(self.device_id))
         try:
             self.emby_croft = EmbyCroft(
                 self.settings["hostname"] + ":" + str(self.settings["port"]),
