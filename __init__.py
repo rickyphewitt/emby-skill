@@ -1,24 +1,21 @@
 import hashlib
-from mycroft import MycroftSkill, intent_file_handler
+from mycroft import intent_file_handler
 from mycroft.skills.common_play_skill import CommonPlaySkill, CPSMatchLevel
 from mycroft.skills.audioservice import AudioService
 from mycroft.api import DeviceApi
 
 from .emby_croft import EmbyCroft
 
-NAME = 'Emby'
-
 
 class Emby(CommonPlaySkill):
 
     def __init__(self):
-        MycroftSkill.__init__(self)
-        self.spoken_name = NAME
+        super().__init__()
         self._setup = False
         self.audio_service = None
         self.emby_croft = None
         self.device_id = hashlib.md5(
-            (NAME+DeviceApi().identity.uuid).encode())\
+            ('Emby'+DeviceApi().identity.uuid).encode())\
             .hexdigest()
 
     def initialize(self):
