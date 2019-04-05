@@ -64,7 +64,7 @@ class Emby(CommonPlaySkill):
         """
         # setup audio service
         self.audio_service = AudioService(self.bus)
-        self.audio_service.play(data[phrase], data['utterance'])
+        self.audio_service.play(data[phrase])
 
     def CPS_match_query_phrase(self, phrase):
         """ This method responds whether the skill can play the input phrase.
