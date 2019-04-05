@@ -20,7 +20,7 @@ AUTH_USERNAME_KEY = "Username"
 AUTH_PASSWORD_KEY = "Pw"
 
 # query param constants
-AUDIO_STREAM = "stream?static=true"
+AUDIO_STREAM = "stream.mp3"
 API_KEY = "api_key="
 
 
