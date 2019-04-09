@@ -104,7 +104,7 @@ class EmbyClient(object):
         return self._get(instant_item_mix)
 
     def get_song_file(self, song_id):
-        url = '{0}{1}/{2}/{3}&{4}{5}'\
+        url = '{0}{1}/{2}/{3}?{4}{5}'\
             .format(self.host, SONG_FILE_URL,
                     song_id, AUDIO_STREAM, API_KEY, self.auth.token)
         return url
@@ -194,9 +194,11 @@ class MediaItemType(Enum):
     ARTIST = "MusicArtist"
     ALBUM = "MusicAlbum"
     SONG = "Audio"
+    OTHER = "Other"
 
     @staticmethod
     def from_string(enum_string):
         for item_type in MediaItemType:
             if item_type.value == enum_string:
                 return item_type
+        return OTHER
