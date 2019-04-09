@@ -201,4 +201,4 @@ class MediaItemType(Enum):
         for item_type in MediaItemType:
             if item_type.value == enum_string:
                 return item_type
-        return OTHER
+        return MediaItemType.OTHER
