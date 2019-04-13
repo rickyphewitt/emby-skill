@@ -46,7 +46,7 @@ class Emby(CommonPlaySkill):
             # setup audio service and play
             self.audio_service = AudioService(self.bus)
             self.speak_playing(intent)
-            self.audio_service.play(songs)
+            self.audio_service.play(songs, message.data['utterance'])
 
     def speak_playing(self, media):
         data = dict()

@@ -240,7 +240,7 @@ class EmbyCroft(object):
                 elif result.type == MediaItemType.SONG:
                     songs.append(result)
                 else:
-                    logging.log(20, "Item is not an Artist/Album/Song: " + result.type)
+                    logging.log(20, "Item is not an Artist/Album/Song: " + result.type.value)
 
             if artists:
                 artist_songs = self.get_songs_by_artist(artists[0].id)

@@ -20,7 +20,7 @@ AUTH_USERNAME_KEY = "Username"
 AUTH_PASSWORD_KEY = "Pw"
 
 # query param constants
-MP3_STREAM = "stream.mp3?static=true"
+AUDIO_STREAM = "stream.mp3"
 API_KEY = "api_key="
 
 
@@ -104,9 +104,9 @@ class EmbyClient(object):
         return self._get(instant_item_mix)
 
     def get_song_file(self, song_id):
-        url = '{0}{1}/{2}/{3}&{4}{5}'\
+        url = '{0}{1}/{2}/{3}?{4}{5}'\
             .format(self.host, SONG_FILE_URL,
-                    song_id, MP3_STREAM, API_KEY, self.auth.token)
+                    song_id, AUDIO_STREAM, API_KEY, self.auth.token)
         return url
 
     def get_albums_by_artist(self, artist_id):
@@ -194,9 +194,11 @@ class MediaItemType(Enum):
     ARTIST = "MusicArtist"
     ALBUM = "MusicAlbum"
     SONG = "Audio"
+    OTHER = "Other"
 
     @staticmethod
     def from_string(enum_string):
         for item_type in MediaItemType:
             if item_type.value == enum_string:
                 return item_type
+        return MediaItemType.OTHER
