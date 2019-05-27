@@ -25,10 +25,10 @@ class IntentType(Enum):
                 return item_type
 
 
-
 class EmbyCroft(object):
 
     def __init__(self, host, username, password, client_id='12345'):
+        host = EmbyCroft.normalize_host(host)
         self.log = logging.getLogger(__name__)
         self.version = "UNKNOWN"
         self.set_version()
@@ -154,18 +154,16 @@ class EmbyCroft(object):
         """
 
         items = self.search(media_name)
-        self.log.log(20, items)
         if items is None:
             items = []
 
-        item_count = len(items)
-
-        self.log.log(20, 'Found {0} item(s) when searching for {1}'
-                     .format(item_count, media_name))
-
         songs = []
-        if item_count > 0:
-            songs = self.get_instant_mix_songs(items[0].id)
+        for item in items:
+            self.log.log(20, 'Instant Mix potential match: ' + item.name)
+            if len(songs) == 0:
+                songs = self.get_instant_mix_songs(item.id)
+            else:
+                break
 
         return songs
 
@@ -264,3 +262,17 @@ class EmbyCroft(object):
             self.version = subprocess.check_output(["git", "describe", "--always"]).strip().decode()
         except Exception as e:
             self.log.log(20, "Failed to determine version with error: {}".format(str(e)))
+
+    @staticmethod
+    def normalize_host(host: str):
+        """
+        Attempts to add http if http is not present in the host name
+
+        :param host:
+        :return:
+        """
+
+        if host is not None and 'http' not in host.lower():
+            host = "http://" + host
+
+        return host

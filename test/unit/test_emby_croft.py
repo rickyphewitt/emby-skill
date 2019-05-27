@@ -141,6 +141,18 @@ class TestEmbyCroft(object):
                 assert songs
                 assert len(songs) == 1
 
+    @pytest.mark.live
+    @pytest.mark.mocked
+    def test_host_normalize(self):
+
+        hostname = "noProtocol"
+        normaized_host = EmbyCroft.normalize_host(hostname)
+        assert "http://" + hostname == normaized_host
+
+        # assert that if http exists then no change
+        hostname = "hTtps://hasProtocol"
+        assert hostname == EmbyCroft.normalize_host(hostname)
+
 
     @pytest.mark.live
     def test_auth(self):
