@@ -40,7 +40,9 @@ class Emby(CommonPlaySkill):
         except Exception as e:
             self.log.log(20, e)
             self.speak_dialog('play_fail', {"media": intent})
+
         if not songs or len(songs) < 1:
+            self.log.log(20, 'No songs Returned')
             self.speak_dialog('play_fail', {"media": intent})
         else:
             # setup audio service and play
