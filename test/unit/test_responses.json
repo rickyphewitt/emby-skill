@@ -30,6 +30,9 @@
         "search_response": {"SearchHints": [{"ItemId": 9285, "Id": 9285, "Name": "Deadweight", "ProductionYear": 2017, "PrimaryImageTag": "14612aee62060811a046bab5cb56d1af", "Type": "MusicAlbum", "IsFolder": "True", "RunTimeTicks": 23903449088, "AlbumId": 0, "AlbumArtist": "Wage War", "Artists": ["Wage War"], "PrimaryImageAspectRatio": 1.12031558185404}], "TotalRecordCount": 1},
         "songs_response": {"Items": [{"Name": "Two Years", "ServerId": "92fcf358310b4fa3ab856f7d10a8e6a0", "Id": "9279", "RunTimeTicks": 749900032, "ProductionYear": 2017, "IndexNumber": 1, "ParentIndexNumber": 1, "IsFolder": "False", "Type": "Audio", "Artists": ["Wage War"], "ArtistItems": [{"Name": "Wage War", "Id": "17323"}], "Album": "Deadweight", "AlbumId": "9285", "AlbumPrimaryImageTag": "14612aee62060811a046bab5cb56d1af", "AlbumArtist": "Wage War", "AlbumArtists": [{"Name": "Wage War", "Id": "17323"}], "ImageTags": {"Primary": "e68c4263e66550357f8b05bae3770088"}, "BackdropImageTags": [], "MediaType": "Audio"}], "TotalRecordCount": 1}
       }
+    },
+    "4.1.1.0": {
+      "public_info": {"LocalAddress": "http://172.17.0.2:8096", "WanAddress": "http://publicIpHere:8096", "ServerName": "emby", "Version": "4.1.1.0", "OperatingSystem": "Linux", "Id": "92fcf358310b4fa3ab856f7d10a8e6a0"}
     }
   }
 }

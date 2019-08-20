@@ -5,7 +5,8 @@ from enum import Enum
 # url constants
 AUTHENTICATE_BY_NAME_URL = "/Users/AuthenticateByName"
 SEARCH_HINTS_URL = "/Search/Hints"
-ARTIST_INSTANT_MIX_URL = "/Artists/InstantMix"
+ARTISTS_URL = "/Artists"
+ARTIST_INSTANT_MIX_URL = ARTISTS_URL + "/InstantMix"
 SONG_FILE_URL = "/Audio"
 DOWNLOAD_URL = "/Download"
 ITEMS_ARTIST_KEY = "ArtistIds"
@@ -15,6 +16,8 @@ ITEMS_ALBUMS_URL = ITEMS_URL + "/?SortBy=SortName&SortOrder=Ascending&IncludeIte
 ITEMS_SONGS_BY_ARTIST_URL = ITEMS_URL + "/?SortBy=SortName&SortOrder=Ascending&IncludeItemTypes=Audio&Recursive=true&" + ITEMS_ARTIST_KEY + "="
 ITEMS_SONGS_BY_ALBUM_URL = ITEMS_URL + "/?SortBy=IndexNumber&" + ITEMS_PARENT_ID_KEY + "="
 LIMIT = "&Limit="
+SERVER_INFO_URL = "/System/Info"
+SERVER_INFO_PUBLIC_URL = SERVER_INFO_URL + "/Public"
 # auth constants
 AUTH_USERNAME_KEY = "Username"
 AUTH_PASSWORD_KEY = "Pw"
@@ -24,7 +27,30 @@ AUDIO_STREAM = "stream.mp3"
 API_KEY = "api_key="
 
 
-class EmbyClient(object):
+class PublicEmbyClient(object):
+    """
+    Handles the publically exposed emby endpoints
+
+    """
+
+    def __init__(self, host, device="noDevice", client="NoClient", client_id="1234", version="0.1"):
+        """
+        Sets up the connection to the Emby server
+        :param host:
+        """
+        self.log = logging.getLogger(__name__)
+        self.host = host
+        self.auth = None
+        self.device = device
+        self.client = client
+        self.client_id = client_id
+        self.version = version
+
+    def get_server_info_public(self):
+        return requests.get(self.host + SERVER_INFO_PUBLIC_URL)
+
+
+class EmbyClient(PublicEmbyClient):
     """
     Handles communication to the Emby server
 
@@ -37,13 +63,9 @@ class EmbyClient(object):
         :param username:
         :param password:
         """
+
+        super().__init__(host, device, client, client_id, version)
         self.log = logging.getLogger(__name__)
-        self.host = host
-        self.auth = None
-        self.device = device
-        self.client = client
-        self.client_id = client_id
-        self.version = version
         self.auth = self._auth_by_user(username, password)
 
     def _auth_by_user(self, username, password):
@@ -122,6 +144,12 @@ class EmbyClient(object):
         if limit:
             url = url + LIMIT+str(limit)
         return self._get(url)
+
+    def get_all_artists(self):
+        return self._get(ARTISTS_URL)
+
+    def get_server_info(self):
+        return self._get(SERVER_INFO_URL)
 
     def _post(self, url, payload):
         """
