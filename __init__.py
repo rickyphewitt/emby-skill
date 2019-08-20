@@ -55,6 +55,37 @@ class Emby(CommonPlaySkill):
         data['media'] = media
         self.speak_dialog('emby', data)
 
+    @intent_file_handler('diagnostic.intent')
+    def handle_diagnostic(self, message):
+
+        self.log.log(20, message.data)
+        self.speak_dialog('diag_start')
+        host = self.settings["hostname"] + ":" + str(self.settings["port"])
+
+        self.emby_croft = EmbyCroft(
+            host,
+            self.settings["username"], self.settings["password"],
+            self.device_id, True)
+
+        connection_success, info = self.emby_croft.diag_public_server_info()
+
+        if connection_success:
+            self.speak_dialog('diag_public_info_success', info)
+        else:
+            self.speak_dialog('diag_public_info_fail', {'host': host})
+            self.speak_dialog('general_check_settings_logs')
+            self.speak_dialog('diag_stop')
+            return
+
+        if not self.auth_to_emby():
+            self.speak_dialog('diag_auth_fail')
+            self.speak_dialog('diag_stop')
+            return
+        else:
+            self.speak_dialog('diag_auth_success')
+
+        self.speak_dialog('diag_complete')
+
     def stop(self):
         pass
 

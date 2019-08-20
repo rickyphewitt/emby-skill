@@ -141,6 +141,32 @@ class TestEmbyCroft(object):
                 assert songs
                 assert len(songs) == 1
 
+    @pytest.mark.mocked
+    def test_diag_public_server_info_happy_path_mock(self):
+
+        emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD, diagnostic=True)
+
+        with mock.patch('requests.get') as MockRequestsGet:
+            public_info_response = TestEmbyCroft.mocked_responses["emby"]["4.1.1.0"]["public_info"]
+            response = MockResponse(200, public_info_response)
+            MockRequestsGet.return_value = response
+            connection_success, info = emby_croft.diag_public_server_info()
+
+            assert connection_success
+            assert info is not None
+
+    @pytest.mark.mocked
+    def test_diag_public_server_info_bad_host_mock(self):
+
+        emby_croft = EmbyCroft('badhostHere', USERNAME, PASSWORD, diagnostic=True)
+
+        with mock.patch('requests.get') as MockRequestsGet:
+            MockRequestsGet.side_effect = Exception('Fail')
+            connection_success, info = emby_croft.diag_public_server_info()
+
+            assert not connection_success
+            assert info is not None
+
     @pytest.mark.live
     @pytest.mark.mocked
     def test_host_normalize(self):
@@ -205,6 +231,24 @@ class TestEmbyCroft(object):
 
             assert match_type == TestEmbyCroft.common_phrases[phrase]['match_type']
             assert songs
+
+    @pytest.mark.live
+    def test_diag_public_server_info_happy_path(self):
+
+        emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD, diagnostic=True)
+        connection_success, info = emby_croft.diag_public_server_info()
+
+        assert connection_success
+        assert info is not None
+
+    @pytest.mark.live
+    def test_diag_public_server_info_bad_host(self):
+
+        emby_croft = EmbyCroft('badhostHere', USERNAME, PASSWORD, diagnostic=True)
+        connection_success, info = emby_croft.diag_public_server_info()
+
+        assert not connection_success
+        assert info is not None
 
 
 class MockResponse:
