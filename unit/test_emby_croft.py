@@ -1,8 +1,9 @@
 import pytest, json
 from collections import defaultdict
-from unittest import TestCase, mock
+from unittest import mock
+
 from emby_croft import EmbyCroft, IntentType
-from emby_client import MediaItemType, EmbyMediaItem
+from emby_client import MediaItemType
 
 HOST = "http://emby:8096"
 USERNAME = "ricky"
@@ -22,10 +23,11 @@ class TestEmbyCroft(object):
 
     # load mocked responses
     mocked_responses = None
-    with open("test/unit/test_responses.json") as f:
+
+    with open('unit/test_responses.json') as f:
         mocked_responses = json.load(f)
     common_phrases = None
-    with open("test/unit/common_phrases.json") as f:
+    with open('unit/common_phrases.json') as f:
         common_phrases = json.load(f)
 
     @pytest.mark.mocked
