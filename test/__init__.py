@@ -11,9 +11,13 @@ def test_runner(skill, example, emitter, loader):
     # Get the skill object from the skill path
     s = [s for s in loader.skills if s and s.root_dir == skill]
 
-    # replace emby_croft with a mock
+    # mock data
+    songs = ['song0', 'song1']
+
+    # setup mocks
     s[0].emby_croft = MagicMock()
-    # Set return value of instant mix for media
-    s[0].emby_croft.instant_mix_for_media.return_value = ['http://song.url.awesome']
+    s[0].auth_to_emby = MagicMock()
+    s[0].auth_to_emby.return_value = True
+    s[0].emby_croft.handle_intent.return_value = songs
 
     return SkillTest(skill, example, emitter).run(loader)
