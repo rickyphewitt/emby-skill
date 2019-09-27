@@ -99,6 +99,16 @@ class Emby(CommonPlaySkill):
 
             song_data = dict()
             song_data[phrase] = songs
+
+            self.log.log(20, "First 3 item urls returned")
+            max_songs_to_log = 3
+            songs_logged = 0
+            for song in songs:
+                self.log.log(20, song)
+                songs_logged = songs_logged + 1
+                if songs_logged >= max_songs_to_log:
+                    break
+
             return phrase, match_level, song_data
         else:
             return None
