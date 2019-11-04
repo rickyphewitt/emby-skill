@@ -7,7 +7,7 @@ skillMetadata:
     - name: hostname
       type: text
       label: Url
-      value: http://emby
+      value: 'http://emby'
     - name: port
       type: number
       label: Port
@@ -15,7 +15,7 @@ skillMetadata:
   - name: User Login Information
     fields:
     - type: label
-      label: Username/password. Leave the password blank if you do not use a password.
+      label: Username and Password. Leave the password blank if you do not use a password.
     - name: username
       type: text
       label: Username
