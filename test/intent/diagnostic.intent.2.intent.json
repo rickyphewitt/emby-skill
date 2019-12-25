@@ -1,0 +1,7 @@
+{
+    "expected_dialog": "diagnostic",
+    "intent": {
+    },
+    "intent_type": "diagnostic.intent",
+    "utterance": "check emily"
+}
