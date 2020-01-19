@@ -27,7 +27,7 @@ class Emby(CommonPlaySkill):
         self.log.log(20, message.data)
 
         # first thing is connect to emby or bail
-        if not self.auth_to_emby():
+        if not self.connect_to_emby():
             self.speak_dialog('configuration_fail')
             return
 
@@ -60,24 +60,20 @@ class Emby(CommonPlaySkill):
 
         self.log.log(20, message.data)
         self.speak_dialog('diag_start')
-        host = self.settings["hostname"] + ":" + str(self.settings["port"])
 
-        self.emby_croft = EmbyCroft(
-            host,
-            self.settings["username"], self.settings["password"],
-            self.device_id, True)
-
+        # connec to emby for diagnostics
+        self.connect_to_emby(True)
         connection_success, info = self.emby_croft.diag_public_server_info()
 
         if connection_success:
             self.speak_dialog('diag_public_info_success', info)
         else:
-            self.speak_dialog('diag_public_info_fail', {'host': host})
+            self.speak_dialog('diag_public_info_fail', {'host': self.settings['hostname']})
             self.speak_dialog('general_check_settings_logs')
             self.speak_dialog('diag_stop')
             return
 
-        if not self.auth_to_emby():
+        if not self.connect_to_emby():
             self.speak_dialog('diag_auth_fail')
             self.speak_dialog('diag_stop')
             return
@@ -110,7 +106,7 @@ class Emby(CommonPlaySkill):
                      or None if no match was found.
         """
         # first thing is connect to emby or bail
-        if not self.auth_to_emby():
+        if not self.connect_to_emby():
             return None
 
         self.log.log(20, phrase)
@@ -144,9 +140,10 @@ class Emby(CommonPlaySkill):
         else:
             return None
 
-    def auth_to_emby(self):
+    def connect_to_emby(self, dagnostic=False):
         """
-        Attempts to auth to the server based on the config
+        Attempts to connect to the server based on the config
+        if diagnostic is False an attempt to auth is also made
         returns true/false on success/failure respectively
 
         :return:
@@ -156,7 +153,7 @@ class Emby(CommonPlaySkill):
             self.emby_croft = EmbyCroft(
                 self.settings["hostname"] + ":" + str(self.settings["port"]),
                 self.settings["username"], self.settings["password"],
-                self.device_id)
+                self.device_id, dagnostic)
             auth_success = True
         except Exception as e:
             self.log.log(20, "failed to connect to emby, error: {0}".format(str(e)))
