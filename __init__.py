@@ -84,7 +84,7 @@ class Emby(CommonPlaySkill):
         else:
             self.speak_dialog('diag_auth_success')
 
-        self.speak_dialog('diag_complete')
+        self.speak_dialog('diagnostic')
 
     def stop(self):
         pass
