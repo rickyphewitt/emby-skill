@@ -1,0 +1,8 @@
+{
+    "expected_dialog": "emby",
+    "intent": {
+        "playlist": "anyPlaylistHere"
+    },
+    "intent_type": "emby.intent",
+    "utterance": "play playlist anyPlaylistHere from mb"
+}

@@ -18,6 +18,7 @@ class IntentType(Enum):
     ARTIST = "artist"
     ALBUM = "album"
     SONG = "song"
+    PLAYLIST = "playlist"
 
     @staticmethod
     def from_string(enum_string):
@@ -57,6 +58,8 @@ class EmbyCroft(object):
             return intent['artist'], IntentType.from_string('artist')
         elif 'album' in intent:
             return intent['album'], IntentType.from_string('album')
+        elif 'playlist' in intent:
+            return intent['playlist'], IntentType.from_string('playlist')
         else:
             return None
 
@@ -84,7 +87,10 @@ class EmbyCroft(object):
             album_items = self.search_album(intent)
             if len(album_items) > 0:
                 songs = self.get_songs_by_album(album_items[0].id)
-
+        elif intent_type == IntentType.PLAYLIST:
+            # return songs in playlist
+            playlist_items = self.search_playlist(intent)
+            songs = self.get_songs_by_playlist(playlist_items[0].id)
         return songs
 
     def find_songs(self, media_name, media_type=None)->[]:
@@ -123,6 +129,16 @@ class EmbyCroft(object):
         :return:
         """
         return self.search(song, [MediaItemType.SONG.value])
+
+    def search_playlist(self, playlist):
+        """
+        Helper method to search Emby for a named playlist
+
+        :param playlist:
+        :return:
+        """
+        return self.search(playlist, [MediaItemType.PLAYLIST.value])
+
 
     def search(self, query, include_media_types=[]):
         """
@@ -187,6 +203,11 @@ class EmbyCroft(object):
 
     def get_all_artists(self):
         return self.client.get_all_artists()
+
+    def get_songs_by_playlist(self, playlist_id):
+        response = self.client.get_songs_by_playlist(playlist_id)
+        return self.convert_response_to_playable_songs(response)
+
 
     def get_server_info_public(self):
         return self.client.get_server_info_public()

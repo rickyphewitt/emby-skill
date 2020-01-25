@@ -142,6 +142,27 @@ class TestEmbyCroft(object):
                 assert len(songs) == 1
 
     @pytest.mark.mocked
+    def test_handle_intent_by_playlist(self):
+        with mock.patch('requests.post') as MockRequestsPost:
+            auth_server_response = TestEmbyCroft.mocked_responses["emby"]["3.5.2.0"]["auth_server_response"]
+            response = MockResponse(200, auth_server_response)
+            MockRequestsPost.return_value = response
+            emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD)
+
+            search_response = TestEmbyCroft.mocked_responses["emby"]["4.2.1.0"]["playlist_search"][
+                "search_response"]
+            get_songs_response = TestEmbyCroft.mocked_responses["emby"]["4.2.1.0"]["playlist_search"][
+                "songs_response"]
+            with mock.patch('requests.get') as MockRequestsGet:
+                responses = [MockResponse(200, search_response), MockResponse(200, get_songs_response)]
+                MockRequestsGet.side_effect = responses
+
+                songs = emby_croft.handle_intent("xmas music", IntentType.PLAYLIST)
+
+                assert songs
+                assert len(songs) == 1
+
+    @pytest.mark.mocked
     def test_diag_public_server_info_happy_path_mock(self):
 
         emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD, diagnostic=True)
@@ -179,7 +200,6 @@ class TestEmbyCroft(object):
         hostname = "hTtps://hasProtocol"
         assert hostname == EmbyCroft.normalize_host(hostname)
 
-
     @pytest.mark.live
     def test_auth(self):
         emby_client = EmbyCroft(HOST, USERNAME, PASSWORD)
@@ -207,6 +227,14 @@ class TestEmbyCroft(object):
 
         emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD)
         songs = emby_croft.handle_intent(album, IntentType.ALBUM)
+        assert songs is not None
+
+    @pytest.mark.live
+    def test_handle_intent_by_playlist(self):
+        playlist = "xmas music"
+
+        emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD)
+        songs = emby_croft.handle_intent(playlist, IntentType.PLAYLIST)
         assert songs is not None
 
     @pytest.mark.live

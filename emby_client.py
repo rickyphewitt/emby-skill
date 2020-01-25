@@ -6,6 +6,7 @@ from enum import Enum
 AUTHENTICATE_BY_NAME_URL = "/Users/AuthenticateByName"
 SEARCH_HINTS_URL = "/Search/Hints"
 ARTISTS_URL = "/Artists"
+PLAYLIST_URL = "/Playlists"
 ARTIST_INSTANT_MIX_URL = ARTISTS_URL + "/InstantMix"
 SONG_FILE_URL = "/Audio"
 DOWNLOAD_URL = "/Download"
@@ -145,6 +146,10 @@ class EmbyClient(PublicEmbyClient):
             url = url + LIMIT+str(limit)
         return self._get(url)
 
+    def get_songs_by_playlist(self, playlist_id):
+        url = PLAYLIST_URL + "/" + str(playlist_id) + ITEMS_URL
+        return self._get(url)
+
     def get_all_artists(self):
         return self._get(ARTISTS_URL)
 
@@ -223,6 +228,7 @@ class MediaItemType(Enum):
     ALBUM = "MusicAlbum"
     SONG = "Audio"
     OTHER = "Other"
+    PLAYLIST = "Playlist"
 
     @staticmethod
     def from_string(enum_string):

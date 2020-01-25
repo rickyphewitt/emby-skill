@@ -42,6 +42,19 @@ class TestEmbyClient(object):
 
     @pytest.mark.client
     @pytest.mark.live
+    def test_songs_by_playlist(self):
+        playlist = 'Xmas Music'
+        client = EmbyClient(HOST, USERNAME, PASSWORD)
+        response = client.search(playlist, [MediaItemType.PLAYLIST.value])
+        search_items = EmbyCroft.parse_search_hints_from_response(response)
+        playlists = EmbyMediaItem.from_list(search_items)
+        assert len(playlists) == 1
+        playlist_id = playlists[0].id
+        songs = client.get_songs_by_playlist(playlist_id)
+        assert songs is not None
+
+    @pytest.mark.client
+    @pytest.mark.live
     def test_server_info_public(self):
         client = PublicEmbyClient(HOST)
         response = client.get_server_info_public()
