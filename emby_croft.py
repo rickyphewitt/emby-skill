@@ -2,14 +2,16 @@ import logging
 import subprocess
 from enum import Enum
 from random import shuffle
+from collections import defaultdict
+import json
 
 try:
     # this import works when installing/running the skill
     # note the relative '.'
-    from .emby_client import EmbyClient, MediaItemType, EmbyMediaItem
+    from .emby_client import EmbyClient, MediaItemType, EmbyMediaItem, PublicEmbyClient
 except (ImportError, SystemError):
     # when running unit tests the '.' from above fails so we exclude it
-    from emby_client import EmbyClient, MediaItemType, EmbyMediaItem
+    from emby_client import EmbyClient, MediaItemType, EmbyMediaItem, PublicEmbyClient
 
 class IntentType(Enum):
     MEDIA = "media"
@@ -27,14 +29,18 @@ class IntentType(Enum):
 
 class EmbyCroft(object):
 
-    def __init__(self, host, username, password, client_id='12345'):
-        host = EmbyCroft.normalize_host(host)
+    def __init__(self, host, username, password, client_id='12345', diagnostic=False):
+        self.host = EmbyCroft.normalize_host(host)
         self.log = logging.getLogger(__name__)
         self.version = "UNKNOWN"
         self.set_version()
-        self.client = EmbyClient(
-            host, username, password,
-            device="Mycroft", client="Emby Skill", client_id=client_id, version=self.version)
+        if not diagnostic:
+            self.client = EmbyClient(
+                self.host, username, password,
+                device="Mycroft", client="Emby Skill", client_id=client_id, version=self.version)
+        else:
+            self.client = PublicEmbyClient(self.host, client_id=client_id)
+
 
     @staticmethod
     def determine_intent(intent: dict):
@@ -57,6 +63,7 @@ class EmbyCroft(object):
     def handle_intent(self, intent: str, intent_type: IntentType):
         """
         Returns songs for given intent if songs are found; none if not
+        :param intent_type:
         :param intent:
         :return:
         """
@@ -178,6 +185,15 @@ class EmbyCroft(object):
         response = self.client.get_songs_by_artist(artist_id)
         return self.convert_response_to_playable_songs(response)
 
+    def get_all_artists(self):
+        return self.client.get_all_artists()
+
+    def get_server_info_public(self):
+        return self.client.get_server_info_public()
+
+    def get_server_info(self):
+        return self.client.get_server_info()
+
     def convert_response_to_playable_songs(self, item_query_response):
         queue_items = EmbyMediaItem.from_list(
             EmbyCroft.parse_response(item_query_response))
@@ -276,3 +292,30 @@ class EmbyCroft(object):
             host = "http://" + host
 
         return host
+
+    def diag_public_server_info(self):
+        # test the public server info endpoint
+        connection_success = False
+        server_info = {}
+
+        response = None
+        try:
+            response = self.get_server_info_public()
+        except Exception as e:
+            details = 'Error occurred when attempting to connect to the Emby server. Error: ' + str(e)
+            self.log.log(20, details)
+            server_info['Error'] = details
+            return connection_success, server_info
+
+        if response.status_code != 200:
+            logging.log(20, 'Non 200 status code returned when fetching public server info: ' + str(response.status_code))
+        else:
+            connection_success = True
+        try:
+            server_info = json.loads(response.text)
+        except Exception as e:
+            details = 'Failed to parse server details, error: ' + str(e)
+            logging.log(20, details)
+            server_info['Error'] = details
+
+        return connection_success, server_info
