@@ -1,3 +1,4 @@
 (Play|I want to hear) (|the song) {media} (from) (emby|mb|mv|nv|emily)
 (Play artist|I want to hear artist|I want to hear the artist) {artist} (from) (emby|mb|mv|nv|emily)
 (Play album|I want to hear album|I want to hear the album) {album} (from) (emby|mb|mv|nv|emily)
+play playlist {playlist} from emby

@@ -1,4 +1,5 @@
-# <img src='https://rawgithub.com/FortAwesome/Font-Awesome/master/advanced-options/raw-svg/solid/play.svg' card_color='#52B54B' width='50' height='50' style='vertical-align:bottom'/> Emby
+[![Build Status](https://travis-ci.com/rickyphewitt/emby-skill.svg?branch=master)](https://travis-ci.com/rickyphewitt/emby-skill)
+# Emby
 This skill allows audio playback from an Emby server
 
 ## About 
@@ -7,7 +8,8 @@ Stream music from your Emby server using Mycroft! Play all songs by an artist or
 ## Examples 
 * "Play Dance Gavin Dance From Emby"
 * "Play Artist Thrice From Emby"
-* "play Album Deadweight From Emby"
+* "Play Album Deadweight From Emby"
+* "Play Playlist Rockin Tunes From Emby"
 
 ## Common Play Framework
 This skill supports the common play framework! This means you don't have to specify "Emby" in your intent. For Example
@@ -24,6 +26,13 @@ rickyphewitt
 
 ## Contributing
 Always looking for bug fixes, features, translation, and feedback that make the Emby for Mycroft experience better!
+
+## Troubleshooting
+### Setup Connection Info
+* Ensure your host, port, username, and password are set at https://account.mycroft.ai/skills
+### Check Server Connection
+* "Check Emby"
+    * This will attempt to connect then authenticate to your Emby server using the connection info provided above
 
 ### Dev Notes
 Skill is broken down into 3 main parts

@@ -62,7 +62,7 @@ class Emby(CommonPlaySkill):
         self.speak_dialog('diag_start')
 
         # connec to emby for diagnostics
-        self.connect_to_emby(True)
+        self.connect_to_emby(diagnostic=True)
         connection_success, info = self.emby_croft.diag_public_server_info()
 
         if connection_success:
@@ -140,7 +140,7 @@ class Emby(CommonPlaySkill):
         else:
             return None
 
-    def connect_to_emby(self, dagnostic=False):
+    def connect_to_emby(self, diagnostic=False):
         """
         Attempts to connect to the server based on the config
         if diagnostic is False an attempt to auth is also made
@@ -153,7 +153,7 @@ class Emby(CommonPlaySkill):
             self.emby_croft = EmbyCroft(
                 self.settings["hostname"] + ":" + str(self.settings["port"]),
                 self.settings["username"], self.settings["password"],
-                self.device_id, dagnostic)
+                self.device_id, diagnostic)
             auth_success = True
         except Exception as e:
             self.log.log(20, "failed to connect to emby, error: {0}".format(str(e)))
