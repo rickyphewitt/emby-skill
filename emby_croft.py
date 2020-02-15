@@ -139,7 +139,6 @@ class EmbyCroft(object):
         """
         return self.search(playlist, [MediaItemType.PLAYLIST.value])
 
-
     def search(self, query, include_media_types=[]):
         """
         Searches Emby from a given query
@@ -239,6 +238,37 @@ class EmbyCroft(object):
             response_json = response.json()
             return response_json["Items"]
 
+    def smart_parse_common_phrase(self, phrase: str):
+        """
+        Attempt to get keywords in phrase such as
+        {artist/album/song} and determine a users
+        intent
+        :param phrase:
+        :return:
+        """
+
+        removals = ['emby', 'mb']
+        media_types = {'artist': MediaItemType.ARTIST,
+                       'album': MediaItemType.ALBUM,
+                       'song': MediaItemType.SONG}
+
+        phrase = phrase.lower()
+
+        for removal in removals:
+            phrase = phrase.replace(removal, "")
+
+        # determine intent if exists
+        # does not handle play album by artist
+        intent = None
+        for media_type in media_types.keys():
+            if media_type in phrase:
+                intent = media_types.get(media_type)
+                logging.log(20, "Found intent in common phrase: " + media_type)
+                phrase = phrase.replace(media_type, "")
+                break
+
+        return phrase, intent
+
     def parse_common_phrase(self, phrase: str):
         """
         Attempts to match emby items with phrase
@@ -247,14 +277,14 @@ class EmbyCroft(object):
         """
 
         logging.log(20, "phrase: " + phrase)
-        phrase = phrase.lower()
-        # see if phrase contains mb or emby
-        if 'mb' in phrase or 'emby' in phrase:
-            # remove from phrase
-            phrase.replace("mb", "")
-            phrase.replace("emby", "")
 
-        results = self.search(phrase)
+        phrase, intent = self.smart_parse_common_phrase(phrase)
+
+        include_media_types = []
+        if intent is not None:
+            include_media_types.append(intent.value)
+
+        results = self.search(phrase, include_media_types)
 
         if results is None or len(results) is 0:
             return None, None
