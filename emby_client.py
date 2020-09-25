@@ -24,7 +24,7 @@ AUTH_USERNAME_KEY = "Username"
 AUTH_PASSWORD_KEY = "Pw"
 
 # query param constants
-AUDIO_STREAM = "stream.mp3"
+AUDIO_STREAM = "universal"
 API_KEY = "api_key="
 
 
@@ -127,9 +127,9 @@ class EmbyClient(PublicEmbyClient):
         return self._get(instant_item_mix)
 
     def get_song_file(self, song_id):
-        url = '{0}{1}/{2}/{3}?{4}{5}'\
+        url = '{0}{1}/{2}/{3}?userId={4}&MaxStreamingBitrate=140000000&AudioCodec=mp3'\
             .format(self.host, SONG_FILE_URL,
-                    song_id, AUDIO_STREAM, API_KEY, self.auth.token)
+                    song_id, AUDIO_STREAM, self.auth.user_id)
         return url
 
     def get_albums_by_artist(self, artist_id):
