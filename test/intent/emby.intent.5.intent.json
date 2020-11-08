@@ -1,8 +1,8 @@
 {
     "expected_dialog": "emby",
     "intent": {
-        "album": "anyAlbumHere"
+        "song": "anySongHere"
     },
     "intent_type": "emby.intent",
-    "utterance": "play album anyAlbumHere from emby"
+    "utterance": "play song anySongHere from emby"
 }

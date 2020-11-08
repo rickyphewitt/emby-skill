@@ -142,7 +142,7 @@ class TestEmbyCroft(object):
                 assert len(songs) == 1
 
     @pytest.mark.mocked
-    def test_handle_intent_by_playlist(self):
+    def test_handle_intent_by_playlist_mock(self):
         with mock.patch('requests.post') as MockRequestsPost:
             auth_server_response = TestEmbyCroft.mocked_responses["emby"]["3.5.2.0"]["auth_server_response"]
             response = MockResponse(200, auth_server_response)
@@ -158,6 +158,25 @@ class TestEmbyCroft(object):
                 MockRequestsGet.side_effect = responses
 
                 songs = emby_croft.handle_intent("xmas music", IntentType.PLAYLIST)
+
+                assert songs
+                assert len(songs) == 1
+
+    @pytest.mark.mocked
+    def test_handle_intent_by_song_mock(self):
+        with mock.patch('requests.post') as MockRequestsPost:
+            auth_server_response = TestEmbyCroft.mocked_responses["emby"]["3.5.2.0"]["auth_server_response"]
+            response = MockResponse(200, auth_server_response)
+            MockRequestsPost.return_value = response
+            emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD)
+
+            search_response = TestEmbyCroft.mocked_responses["emby"]["4.4.3.0"]["song_search"][
+                "search_response"]
+            with mock.patch('requests.get') as MockRequestsGet:
+                responses = [MockResponse(200, search_response)]
+                MockRequestsGet.side_effect = responses
+
+                songs = emby_croft.handle_intent("test", IntentType.SONG)
 
                 assert songs
                 assert len(songs) == 1
@@ -238,12 +257,21 @@ class TestEmbyCroft(object):
         assert songs is not None
 
     @pytest.mark.live
+    def test_handle_intent_by_song(self):
+        song = "And I Told Them I Invented Times New Roman"
+
+        emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD)
+        songs = emby_croft.handle_intent(song, IntentType.SONG)
+        assert songs is not None
+        assert len(songs) is 1
+
+    @pytest.mark.live
     def test_search_for_song(self):
         song = "And I Told Them I Invented Times New Roman"
 
         emby_croft = EmbyCroft(HOST, USERNAME, PASSWORD)
         songs = emby_croft.search_song(song)
-        assert len(songs) == 3
+        assert len(songs) == 4
         for song_item in songs:
             assert song in song_item.name
             assert song_item.id is not None

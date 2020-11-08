@@ -6,3 +6,5 @@ play album {album} from emby
 play album {album} from mb
 play playlist {playlist} from mb
 play playlist {playlist} from emby
+play song {song} from mb
+play song {song} from emby

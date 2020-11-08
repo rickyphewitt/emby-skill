@@ -60,6 +60,8 @@ class EmbyCroft(object):
             return intent['album'], IntentType.from_string('album')
         elif 'playlist' in intent:
             return intent['playlist'], IntentType.from_string('playlist')
+        elif 'song' in intent:
+            return intent['song'], IntentType.from_string('song')
         else:
             return None
 
@@ -91,6 +93,11 @@ class EmbyCroft(object):
             # return songs in playlist
             playlist_items = self.search_playlist(intent)
             songs = self.get_songs_by_playlist(playlist_items[0].id)
+        elif intent_type == IntentType.SONG:
+            # find Song
+            song_items = self.search_song(intent)
+            if len(song_items) > 0:
+                songs = self.convert_to_playable_songs([song_items[0]])
         return songs
 
     def find_songs(self, media_name, media_type=None)->[]:
@@ -206,7 +213,6 @@ class EmbyCroft(object):
     def get_songs_by_playlist(self, playlist_id):
         response = self.client.get_songs_by_playlist(playlist_id)
         return self.convert_response_to_playable_songs(response)
-
 
     def get_server_info_public(self):
         return self.client.get_server_info_public()

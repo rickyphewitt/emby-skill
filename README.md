@@ -10,6 +10,8 @@ Stream music from your Emby server using Mycroft! Play all songs by an artist or
 * "Play Artist Thrice From Emby"
 * "Play Album Deadweight From Emby"
 * "Play Playlist Rockin Tunes From Emby"
+* "Play Song Stitch From Emby"
+
 
 ## Common Play Framework
 This skill supports the common play framework! This means you don't have to specify "Emby" in your intent. For Example
