@@ -1,2 +1,6 @@
 tocar {media} do emby
 tocar {media} do mb
+tocando artista {artist} de emby
+tocando artista {artist} do mb
+tocando album {album} de emby
+tocar album{album} de mb
