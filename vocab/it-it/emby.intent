@@ -1,2 +1,6 @@
 suona {media} con emby
 suona {media} su mb
+riproduci l'artista {artist} da emby
+riproduci l'artista {artist} da mb
+riproduci l'album {album} da emby
+riproduci l'album {album} da mb

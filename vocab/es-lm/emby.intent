@@ -1,0 +1,6 @@
+Reproduce {media} en emby
+reproduce {media} en emby
+Pon (a|el artista| ) {artist} (en|por|de|desde) emby
+Pon (a|el artista| ) {artist} (en|por|de|desde) mb
+Pon ( |el album) {album} (en|por|desde) emby
+Pon ( |el album) {album} (en|por|de|desde) mb
