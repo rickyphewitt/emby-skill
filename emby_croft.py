@@ -370,6 +370,10 @@ class EmbyCroft(object):
             connection_success = True
         try:
             server_info = json.loads(response.text)
+            # backwards compatibility for old diag tranlsations
+            if 'LocalAddress' not in server_info:
+                server_info['LocalAddress'] = "Not Available"
+
         except Exception as e:
             details = 'Failed to parse server details, error: ' + str(e)
             logging.log(20, details)

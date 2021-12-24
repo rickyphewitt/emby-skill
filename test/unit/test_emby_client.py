@@ -60,7 +60,7 @@ class TestEmbyClient(object):
         response = client.get_server_info_public()
         assert response.status_code == 200
         server_info = response.json()
-        TestEmbyClient._assert_server_info(server_info)
+        TestEmbyClient._assert_server_info_public(server_info)
 
     @pytest.mark.client
     @pytest.mark.live
@@ -72,8 +72,11 @@ class TestEmbyClient(object):
         TestEmbyClient._assert_server_info(server_info)
 
     def _assert_server_info(server_info):
+        TestEmbyClient._assert_server_info_public(server_info)
         assert server_info['LocalAddress'] is not None
         assert server_info['WanAddress'] is not None
+
+    def _assert_server_info_public(server_info):
         assert server_info['ServerName'] is not None
         assert server_info['Version'] is not None
         assert server_info['Id'] is not None
