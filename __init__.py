@@ -59,26 +59,26 @@ class Emby(CommonPlaySkill):
     def handle_diagnostic(self, message):
 
         self.log.log(20, message.data)
-        self.speak_dialog('diag_start')
+        self.speak_dialog('diag_start', wait=True)
 
-        # connec to emby for diagnostics
+        # connect to emby for diagnostics
         self.connect_to_emby(diagnostic=True)
         connection_success, info = self.emby_croft.diag_public_server_info()
 
         if connection_success:
-            self.speak_dialog('diag_public_info_success', info)
+            self.speak_dialog('diag_public_info_success', info,  wait=True)
         else:
-            self.speak_dialog('diag_public_info_fail', {'host': self.settings['hostname']})
-            self.speak_dialog('general_check_settings_logs')
+            self.speak_dialog('diag_public_info_fail', {'host': self.settings['hostname']},  wait=True)
+            self.speak_dialog('general_check_settings_logs',  wait=True)
             self.speak_dialog('diag_stop')
             return
 
         if not self.connect_to_emby():
-            self.speak_dialog('diag_auth_fail')
+            self.speak_dialog('diag_auth_fail',  wait=True)
             self.speak_dialog('diag_stop')
             return
         else:
-            self.speak_dialog('diag_auth_success')
+            self.speak_dialog('diag_auth_success',  wait=True)
 
         self.speak_dialog('diagnostic')
 
